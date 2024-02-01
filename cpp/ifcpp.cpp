@@ -3,7 +3,8 @@
 
 int main(int argc, char *argv[]) {
   /* 画像の読み込み */
-  cv::Mat inputImage = cv::imread("../../input.jpg");
+  std::string infilepath = "../../QR_sample6.png";
+  cv::Mat inputImage = cv::imread(infilepath);
 
   /* 画像が正しく読み込まれたかを確認 */
   if (inputImage.empty()) {
@@ -11,18 +12,25 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  /* 画像処理 */
-  cv::Mat grayscaleImage;
-  ConvertColor(inputImage, grayscaleImage, cv::COLOR_BGR2GRAY);
+  /* 計測開始 */
+  std::chrono::steady_clock::time_point stime = std::chrono::steady_clock::now();
 
-  /* 処理画像を表示 */
-  cv::imshow("Grayscale Image", grayscaleImage);
+  cv::Mat outputImage;
+  bool ret = detect(inputImage, outputImage);
 
-  /* キー入力待ち */
-  cv::waitKey(0);
+  /* 計測終了 */
+  std::chrono::steady_clock::time_point etime = std::chrono::steady_clock::now();
+  long elapsedtime = std::chrono::duration_cast<std::chrono::milliseconds>(etime - stime).count() % 1000;
+  std::cout << "elapsedtime: " << elapsedtime << "ms." << std::endl;
 
-  /* ウィンドウを閉じる */
-  cv::destroyAllWindows();
+  /* Output file. */
+  int path_i = infilepath.find_last_of("/") + 1;
+  int ext_i = infilepath.find_last_of(".");
+  std::string pathname= infilepath.substr(0, path_i);
+  std::string filename= infilepath.substr(path_i, ext_i-path_i);
+  std::string extname = infilepath.substr(ext_i, infilepath.size()-ext_i);
+  std::string outfile = pathname + "out" + filename + extname;
+  cv::imwrite(outfile, outputImage);
 
   return 0;
 }

@@ -23,7 +23,6 @@ function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D|null>();
   const loopRef = useRef(0);
-  let cnt = 0;
 
   /* wasm読込み */
   const h = require('./cppmain.js');
@@ -64,12 +63,7 @@ function App() {
     if(ctx && video && canvas && wasm) {
       ctx.drawImage(video, 0, 0);
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const buffer = wasm._creata_buffer(data.data.length);
-      wasm.HEAPU8.set(data.data, buffer);
-      wasm._Convert(buffer, data.width, data.height, cnt);
-      wasm._destroy_buffer(buffer);
-      cnt++;
-      if(cnt>=200) cnt = 0;
+      wasm.detect(data.data, data.width, data.height);
     }
     loopRef.current = requestAnimationFrame(loop);
   }
