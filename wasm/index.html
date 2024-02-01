@@ -42,10 +42,10 @@ const init = async () => {
     );
 
     const start1 = performance.now();
-    const buffer = Module.creatabuffer(data.data.length);
+    const buffer = Module._creata_buffer(data.data.length);
     Module.HEAPU8.set(data.data, buffer);
-    Module.doOpenCvTask(buffer, data.width, data.height, cnt);
-    Module.destroybuffer(buffer);
+    Module._Convert(buffer, data.width, data.height, cnt);
+    Module._destroy_buffer(buffer);
     const end1 = performance.now();
     cnt++;
     sumTime += end1 - start1;
